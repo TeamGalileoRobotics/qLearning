@@ -7,7 +7,7 @@ from environment import Environment
 
 GAMMA = 0.8
 
-NUM_EPISODES = 100
+NUM_EPISODES = 1000
 wins = 0.0
 losses = 0.0
 
