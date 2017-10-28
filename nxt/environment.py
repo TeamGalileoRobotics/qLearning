@@ -3,6 +3,13 @@ import nxt.locator
 from nxt.sensor import *
 from nxt.motor import *
 
+# states: 40/20 or 120/70 (rounded)
+# 
+# actions: UP_UP, UP_DOWN, ...
+# move by 10 degrees
+# 
+# reward: distance moved
+
 class Environment:
     running = True
     
