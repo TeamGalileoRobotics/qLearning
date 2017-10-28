@@ -1,25 +1,27 @@
 import random
-
+import nxt.locator
+from nxt.sensor import *
+from nxt.motor import *
 
 class Environment:
-    RUNNING = 0
-    WON = 1
-    LOST = 2
+    running = True
+    
+    UP_UP = 0
+    UP_DOWN = 1
+    DOWN_UP = 2
+    DOWN_DOWN = 3
 
     def __init__(self):
-        self.state = random.randint(0, 5)
+        self.state = [0,0]
         self.completion = self.RUNNING
+        self.nxt = nxt.locator.find_one_brick(name = 'NXT')
+        self.ultrasonic = Ultrasonic(nxt, PORT_1)
 
     def move(self, action):
-        reward = self.REWARDS[self.state][action]
+        start_distance = ultrasonic.get_sample()
+        print start_distance
+        #TODO: move motor 
+        reward = ultrasonic.get_sample() - start_distance
         self.state = action
-
-        # agent won
-        if self.state == self.GOAL_STATE:
-            self.completion = self.WON
-
-        # agent lost
-        if reward == self.BAD:
-            self.completion = self.LOST
 
         return reward

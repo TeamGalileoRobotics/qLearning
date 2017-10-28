@@ -1,5 +1,5 @@
 import random
-from environment import Environment
+from environment import 
 
 # 0 <= GAMMA < 1
 # GAMMA = 0 -> only consider immediate rewards
