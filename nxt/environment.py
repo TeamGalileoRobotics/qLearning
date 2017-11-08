@@ -13,15 +13,25 @@ from nxt.motor import *
 class Environment:
     running = True
 
+    REWARD_BAD = -100
+
     SPEED = 50
     STEP_SIZE = 10
 
     NUM_ACTIONS = 4
 
+    top_current = 0
+    TOP_MIN = 0
+    TOP_MAX = 84
+
+    bottom_current = 0
+    BOTTOM_MIN = 0
+    BOTTOM_MAX = 270
+
     def __init__(self):
-        self.state = [0,0]
-        self.completion = self.RUNNING
-        self.nxt = nxt.locator.find_one_brick(name = 'NXT')
+        self.state = [0, 0]
+        self.running = True
+        self.nxt = nxt.locator.find_one_brick()
         self.ultrasonic = Ultrasonic(nxt, PORT_1)
 
         self.motor_top = Motor(nxt, PORT_A)
@@ -32,23 +42,35 @@ class Environment:
         print 'start distance: ' + start_distance
         
         if action == Action.UP_UP:
-            motor_top.turn(SPEED, STEP_SIZE)
-            motor_bottom.turn(SPEED, STEP_SIZE)
+            top_new = top_current + STEP_SIZE
+            bottom_new = bottom_current + STEP_SIZE
         else if action == Action.UP_DOWN:
-            motor_top.turn(SPEED, STEP_SIZE)
-            motor_bottom.turn(SPEED, 0 - STEP_SIZE)
+            top_new = top_current + STEP_SIZE
+            bottom_new = bottom_current - STEP_SIZE
         else if action == Action.DOWN_UP:
-            motor_top.turn(SPEED, 0 - STEP_SIZE)
-            motor_bottom.turn(SPEED, STEP_SIZE)
+            top_new = top_current - STEP_SIZE
+            bottom_new = bottom_current + STEP_SIZE
         else if action == Action.DOWN_DOWN:
-            motor_top.turn(SPEED, 0 - STEP_SIZE)
-            motor_bottom.turn(SPEED, 0 - STEP_SIZE)
+            top_new = top_current - STEP_SIZE
+            bottom_new = bottom_current - STEP_SIZE
 
-        reward = ultrasonic.get_sample() - start_distance
-        self.state = motor_top.
+        if check_bounds(top_new, bottom_new):
+            motor_top.turn(SPEED, top_new)
+            motor_bottom.turn(SPEED, bottom_new)
+            reward = ultrasonic.get_sample() - start_distance
+        else:
+            print 'out of bounds'
+            reward = REWARD_BAD
+
+        self.state = round(top_current / 10) + "/" + round(bottom_current / 10)
 
         print 'reward: ' + reward
         return reward
+
+    def check_bounds(self, top_new, bottom_new):
+        if top_new < TOP_MIN or top_new > TOP_MAX: return False
+        if bottom_new < BOTTOM_MIN or bottom_new > BOTTOM_MAX: return False
+        return True
 
 class Action:
     UP_UP = 0x1
