@@ -1,5 +1,6 @@
 import random
-from environment import 
+from environment import Environment
+from environment import Action
 
 # 0 <= GAMMA < 1
 # GAMMA = 0 -> only consider immediate rewards
@@ -11,8 +12,8 @@ NUM_EPISODES = 1000
 wins = 0.0
 losses = 0.0
 
-# initialize "brain" with 0's
-q = [[0 for _ in range(6)] for _ in range(6)]
+# initialize "brain"
+q = {}
 
 
 # normalize so highest/lowest value is 100/-100
@@ -32,6 +33,11 @@ def normalize(matrix):
 
     return matrix
 
+# initialize a q value array
+def initialize_q_value(value):
+    if !value in q:
+        q[value] = [0 for _ in range(Environment.NUM_ACTIONS)]
+
 
 # do episodes
 for episode in range(NUM_EPISODES):
@@ -41,6 +47,9 @@ for episode in range(NUM_EPISODES):
 
     while env.completion == env.RUNNING:
         old_state = env.state
+
+        # set q value to empty array if not already existing
+        initialize_q_value(old_state)
 
         # pick only best actions (this way of picking might leave actions unexplored)
         # actions = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]

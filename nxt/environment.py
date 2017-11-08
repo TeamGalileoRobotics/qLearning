@@ -16,6 +16,8 @@ class Environment:
     SPEED = 50
     STEP_SIZE = 10
 
+    NUM_ACTIONS = 4
+
     def __init__(self):
         self.state = [0,0]
         self.completion = self.RUNNING
