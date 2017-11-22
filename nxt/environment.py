@@ -16,17 +16,17 @@ class Environment:
     REWARD_BAD = -100
 
     SPEED = 50
-    STEP_SIZE = 1
+    STEP_SIZE = 15
 
     NUM_ACTIONS = 4
 
     top_current = 0
-    TOP_MIN = 0
-    TOP_MAX = 10
+    TOP_MIN = 5
+    TOP_MAX = 50
 
     bottom_current = 0
-    BOTTOM_MIN = 0
-    BOTTOM_MAX = 10
+    BOTTOM_MIN = 5
+    BOTTOM_MAX = 90
 
     def __init__(self):
         self.state = "0/0"
@@ -42,15 +42,31 @@ class Environment:
         start_distance = self.ultrasonic.get_sample()
         print 'start distance: ' + str(start_distance)
 
-        # TODO: add speed (direction) variable to turn motor
-        # FIXME: rewrite plox
-        
-        top_new = self.top_current + self.STEP_SIZE*action[0]
-        bottom_new = self.bottom_current + self.STEP_SIZE*action[1]
+        top_fac = 0
+        bottom_fac = 0
+
+        if action == Action.UP_UP:
+            top_fac = 1
+            bottom_fac = 1
+        elif action == Action.UP_DOWN:
+            top_fac = 1
+            bottom_fac = -1
+        elif action == Action.DOWN_UP:
+            top_fac = -1
+            bottom_fac = 1
+        elif action == Action.DOWN_DOWN:
+            top_fac = -1
+            bottom_fac = -1
+
+        top_angle = top_fac * self.STEP_SIZE
+        bottom_angle = bottom_fac * self.STEP_SIZE
+
+        top_new = self.bottom_current + top_angle
+        bottom_new = self.bottom_current + bottom_angle
 
         if self.check_bounds(top_new, bottom_new):
-            self.motor_top.turn(self.SPEED, self.STEP_SIZE)
-            self.motor_bottom.turn(self.SPEED, self.STEP_SIZE)
+            self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
+            self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
             self.top_current = top_new
             self.bottom_current = bottom_new
             reward = self.ultrasonic.get_sample() - start_distance
@@ -71,7 +87,7 @@ class Environment:
         return True
 
 class Action:
-    [1,1] = 0
-    [1,-1] = 1
-    [-1,1] = 2
-    [-1,-1] = 3
+    UP_UP = 0
+    UP_DOWN = 1
+    DOWN_UP = 2
+    DOWN_DOWN = 3
