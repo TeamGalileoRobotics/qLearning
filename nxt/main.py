@@ -34,9 +34,9 @@ def normalize(matrix):
     return matrix
 
 # initialize a q value array
-def initialize_q_value(value):
-    if !value in q:
-        q[value] = [0 for _ in range(Environment.NUM_ACTIONS)]
+def initialize_q_value(key):
+    if not key in q:
+        q[key] = [0 for _ in range(Environment.NUM_ACTIONS)]
 
 
 # do episodes
@@ -45,12 +45,12 @@ for episode in range(NUM_EPISODES):
 
     output = str(episode) + ": " + str(env.state)
 
-    while env.completion == env.RUNNING:
+    while env.running:
         old_state = env.state
 
         # set q value to empty array if not already existing
         initialize_q_value(old_state)
-
+        print(q)
         # pick only best actions (this way of picking might leave actions unexplored)
         # actions = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]
         # more thorough way, also includes all unexplored actions
@@ -60,11 +60,13 @@ for episode in range(NUM_EPISODES):
         action = random.choice(actions)
         reward = env.move(action)
 
+        initialize_q_value(env.state)
+
         # q-learning
-        q[old_state][action] = reward + GAMMA * max(q[action])
+        q[old_state][action] = reward + GAMMA * max(q[env.state])
 
         # normalize values
-        q = normalize(q)
+        #q = normalize(q)
 
         output += ", " + str(env.state)
 
