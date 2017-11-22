@@ -13,20 +13,20 @@ from nxt.motor import *
 class Environment:
     running = True
 
-    REWARD_BAD = -100
+    REWARD_BAD = -1000
 
-    SPEED = 50
-    STEP_SIZE = 15
+    SPEED = 30
+    STEP_SIZE = 7
 
     NUM_ACTIONS = 4
 
     top_current = 0
-    TOP_MIN = 5
-    TOP_MAX = 50
+    TOP_MIN = 2
+    TOP_MAX = 65
 
     bottom_current = 0
-    BOTTOM_MIN = 5
-    BOTTOM_MAX = 90
+    BOTTOM_MIN = 2
+    BOTTOM_MAX = 180
 
     def __init__(self):
         self.state = "0/0"
@@ -64,6 +64,8 @@ class Environment:
         top_new = self.bottom_current + top_angle
         bottom_new = self.bottom_current + bottom_angle
 
+        # FIXME: current values are somehow wrong (SEND HELP)
+
         if self.check_bounds(top_new, bottom_new):
             self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
             self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
@@ -74,11 +76,11 @@ class Environment:
             print 'out of bounds'
             reward = self.REWARD_BAD
 
-        self.state = str(round(self.top_current / 10)) + "/" + str(round(self.bottom_current / 10))
+        self.state = str(round(self.top_current / self.STEP_SIZE)) + "/" + str(round(self.bottom_current / self.STEP_SIZE))
 
-        print 'reward: ' + str(reward)
-        print 'bottom_current: ' + str(self.bottom_current)
         print 'top_current: ' + str(self.top_current)
+        print 'bottom_current: ' + str(self.bottom_current)
+        print 'reward: ' + str(reward)
         return reward
 
     def check_bounds(self, top_new, bottom_new):
