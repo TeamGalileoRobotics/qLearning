@@ -11,8 +11,6 @@ from nxt.motor import *
 # reward: distance moved
 
 class Environment:
-    running = True
-
     REWARD_BAD = -1000
 
     SPEED = 30
@@ -20,15 +18,15 @@ class Environment:
 
     NUM_ACTIONS = 4
 
-    top_current = 0
     TOP_MIN = 2
     TOP_MAX = 65
 
-    bottom_current = 0
     BOTTOM_MIN = 2
     BOTTOM_MAX = 180
 
     def __init__(self):
+        self.top_current = 0
+        self.bottom_current = 0
         self.state = "0/0"
         self.running = True
         self.nxt = nxt.locator.find_one_brick()
