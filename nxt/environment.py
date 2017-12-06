@@ -18,10 +18,10 @@ class Environment:
 
     NUM_ACTIONS = 4
 
-    TOP_MIN = 2
+    TOP_MIN = 0
     TOP_MAX = 65
 
-    BOTTOM_MIN = 2
+    BOTTOM_MIN = 0
     BOTTOM_MAX = 180
 
     def __init__(self):
@@ -29,6 +29,7 @@ class Environment:
         self.bottom_current = 0
         self.state = "0/0"
         self.running = True
+        
         self.nxt = nxt.locator.find_one_brick()
         print("nxt: " + str(self.nxt))
         self.ultrasonic = Ultrasonic(self.nxt, PORT_1)
@@ -62,7 +63,7 @@ class Environment:
         top_new = self.bottom_current + top_angle
         bottom_new = self.bottom_current + bottom_angle
 
-        # FIXME: current values are somehow wrong (SEND HELP)
+        # TODO: we have to *measure* motor values!
 
         if self.check_bounds(top_new, bottom_new):
             self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)

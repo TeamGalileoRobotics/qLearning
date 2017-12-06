@@ -7,7 +7,6 @@ from nxt.motor import *
 
 b = nxt.locator.find_one_brick(name = 'NXT')
 
-#Ultrasonic sensor latency test
 m = Motor(b, PORT_A)
 
 m.reset_position(False)

@@ -50,7 +50,7 @@ for episode in range(NUM_EPISODES):
 
         # set q value to empty array if not already existing
         initialize_q_value(old_state)
-        print(q)
+        #print(q)
         # pick only best actions (this way of picking might leave actions unexplored)
         # actions = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]
         # more thorough way, also includes all unexplored actions
