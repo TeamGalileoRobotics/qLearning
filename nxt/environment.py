@@ -1,3 +1,4 @@
+import time
 import random
 import nxt.locator
 from nxt.sensor import *
@@ -13,15 +14,15 @@ from nxt.motor import *
 class Environment:
     REWARD_BAD = -1000
 
-    SPEED = 30
-    STEP_SIZE = 7
+    SPEED = 40
+    STEP_SIZE = 20
 
     NUM_ACTIONS = 4
 
     TOP_MIN = 0
     TOP_MAX = 65
 
-    BOTTOM_MIN = 0
+    BOTTOM_MIN = -10
     BOTTOM_MAX = 180
 
     def __init__(self):
@@ -31,7 +32,8 @@ class Environment:
         self.running = True
         
         self.nxt = nxt.locator.find_one_brick()
-        print("nxt: " + str(self.nxt))
+        print 'nxt: ' + str(self.nxt)
+        
         self.ultrasonic = Ultrasonic(self.nxt, PORT_1)
 
         self.motor_top = Motor(self.nxt, PORT_A)
@@ -41,6 +43,7 @@ class Environment:
 
     def move(self, action):
         start_distance = self.ultrasonic.get_sample()
+        print '------'
         print 'start distance: ' + str(start_distance)
 
         top_fac = 0
@@ -62,12 +65,15 @@ class Environment:
         top_angle = top_fac * self.STEP_SIZE
         bottom_angle = bottom_fac * self.STEP_SIZE
 
-        top_new = self.bottom_current + top_angle
+        top_new = self.top_current + top_angle
         bottom_new = self.bottom_current + bottom_angle
 
         if self.check_bounds(top_new, bottom_new):
             self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
+            time.sleep(0.5)
             self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
+            time.sleep(0.5)
+
             self.top_current = self.motor_top.get_tacho().rotation_count
             self.bottom_current = self.motor_bottom.get_tacho().rotation_count
             reward = self.ultrasonic.get_sample() - start_distance
