@@ -36,6 +36,8 @@ class Environment:
 
         self.motor_top = Motor(self.nxt, PORT_A)
         self.motor_bottom = Motor(self.nxt, PORT_B)
+        self.motor_top.reset_position(False)
+        self.motor_bottom.reset_position(False)
 
     def move(self, action):
         start_distance = self.ultrasonic.get_sample()
@@ -63,13 +65,11 @@ class Environment:
         top_new = self.bottom_current + top_angle
         bottom_new = self.bottom_current + bottom_angle
 
-        # TODO: we have to *measure* motor values!
-
         if self.check_bounds(top_new, bottom_new):
             self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
             self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
-            self.top_current = top_new
-            self.bottom_current = bottom_new
+            self.top_current = self.motor_top.get_tacho().rotation_count
+            self.bottom_current = self.motor_bottom.get_tacho().rotation_count
             reward = self.ultrasonic.get_sample() - start_distance
         else:
             print 'out of bounds'
