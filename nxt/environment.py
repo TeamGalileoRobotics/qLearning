@@ -1,5 +1,5 @@
 import time
-import random
+import keyboard
 import nxt.locator
 from nxt.sensor import *
 from nxt.motor import *
@@ -14,15 +14,15 @@ from nxt.motor import *
 class Environment:
     REWARD_BAD = -1000
 
-    SPEED = 40
+    SPEED = 60
     STEP_SIZE = 20
 
     NUM_ACTIONS = 4
 
     TOP_MIN = 0
-    TOP_MAX = 65
+    TOP_MAX = 70
 
-    BOTTOM_MIN = -10
+    BOTTOM_MIN = 0
     BOTTOM_MAX = 180
 
     def __init__(self):
@@ -86,6 +86,8 @@ class Environment:
         print 'top_current: ' + str(self.top_current)
         print 'bottom_current: ' + str(self.bottom_current)
         print 'reward: ' + str(reward)
+        if keyboard.is_pressed('q'):
+            self.running = False
         return reward
 
     def check_bounds(self, top_new, bottom_new):
