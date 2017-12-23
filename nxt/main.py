@@ -58,7 +58,11 @@ while env.running:
                q_value == max(q[env.state]) or q_value == 0]
 
     action = random.choice(actions)
-    reward = env.move(action)
+
+    try:
+        reward = env.move(action)
+    except:
+        break
 
     initialize_q_value(env.state)
 
