@@ -15,7 +15,8 @@ class Environment:
     REWARD_BAD = -1000
 
     SPEED = 60
-    STEP_SIZE = 20
+    STEP_SIZE = 10
+    WAIT_TIME = 0.2
 
     NUM_ACTIONS = 4
 
@@ -70,13 +71,13 @@ class Environment:
 
         if self.check_bounds(top_new, bottom_new):
             self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
-            time.sleep(0.5)
             self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
-            time.sleep(0.5)
+            time.sleep(self.WAIT_TIME)
 
             self.top_current = self.motor_top.get_tacho().rotation_count
             self.bottom_current = self.motor_bottom.get_tacho().rotation_count
             reward = self.ultrasonic.get_sample() - start_distance
+            reward *= reward * reward
         else:
             print 'out of bounds'
             reward = self.REWARD_BAD
