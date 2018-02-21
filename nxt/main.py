@@ -10,6 +10,8 @@ from environment import Action
 
 GAMMA = 0.8
 
+confidence = 0
+
 # initialize "brain"
 brain = open("brainFile", "r")
 
@@ -50,14 +52,16 @@ while env.running:
 
     # set q value to empty array if not already existing
     initialize_q_value(old_state)
-    #print(q)
-    # pick only best actions (this way of picking might leave actions unexplored)
-    # actions = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]
-    # more thorough way, also includes all unexplored actions
-    actions = [action for action, q_value in enumerate(q[env.state]) if
-               q_value == max(q[env.state]) or q_value == 0]
 
-    action = random.choice(actions)
+    # pick only best actions (this way of picking might leave actions unexplored)
+    max_action = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]
+
+    if (confidence > random.random()):
+        action = max_action
+    else:
+        action = random.randint(0, env.NUM_ACTIONS)
+
+    confidence += (1 - confidence) / 10
 
     try:
         reward = env.move(action)

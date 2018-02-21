@@ -14,9 +14,10 @@ from nxt.motor import *
 class Environment:
     REWARD_BAD = -1000
 
-    SPEED = 60
-    STEP_SIZE = 10
+    SPEED = 50
     WAIT_TIME = 0.2
+    ACCURACY = 10
+    step_size = 12
 
     NUM_ACTIONS = 4
 
@@ -24,7 +25,7 @@ class Environment:
     TOP_MAX = 70
 
     BOTTOM_MIN = 0
-    BOTTOM_MAX = 180
+    BOTTOM_MAX = 160
 
     def __init__(self):
         self.top_current = 0
@@ -35,7 +36,8 @@ class Environment:
         self.nxt = nxt.locator.find_one_brick()
         print 'nxt: ' + str(self.nxt)
         
-        self.ultrasonic = Ultrasonic(self.nxt, PORT_1)
+        self.ultrasonic1 = Ultrasonic(self.nxt, PORT_1)
+        self.ultrasonic2 = Ultrasonic(self.nxt, PORT_2)
 
         self.motor_top = Motor(self.nxt, PORT_A)
         self.motor_bottom = Motor(self.nxt, PORT_B)
@@ -43,7 +45,7 @@ class Environment:
         self.motor_bottom.reset_position(False)
 
     def move(self, action):
-        start_distance = self.ultrasonic.get_sample()
+        start_distance = self.get_distance()
         print '------'
         print 'start distance: ' + str(start_distance)
 
@@ -76,13 +78,13 @@ class Environment:
 
             self.top_current = self.motor_top.get_tacho().rotation_count
             self.bottom_current = self.motor_bottom.get_tacho().rotation_count
-            reward = self.ultrasonic.get_sample() - start_distance
+            reward = self.get_distance() - start_distance
             reward *= reward * reward
         else:
             print 'out of bounds'
             reward = self.REWARD_BAD
 
-        self.state = str(round(self.top_current / self.STEP_SIZE)) + "/" + str(round(self.bottom_current / self.STEP_SIZE))
+        self.state = str(round(self.top_current / ACCURACY)) + "/" + str(round(self.bottom_current / ACCURACY))
 
         print 'top_current: ' + str(self.top_current)
         print 'bottom_current: ' + str(self.bottom_current)
@@ -95,6 +97,9 @@ class Environment:
         if top_new < self.TOP_MIN or top_new > self.TOP_MAX: return False
         if bottom_new < self.BOTTOM_MIN or bottom_new > self.BOTTOM_MAX: return False
         return True
+
+    def get_distance(self):
+        return (self.ultrasonic1.get_sample() + self.ultrasonic2.get_sample()) / 2
 
 class Action:
     UP_UP = 0
