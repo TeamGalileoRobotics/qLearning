@@ -1,5 +1,6 @@
 import random
 import os
+import traceback
 import json
 from environment import Environment
 from environment import Action
@@ -56,6 +57,8 @@ while env.running:
     # pick only best actions (this way of picking might leave actions unexplored)
     max_action = [action for action, q_value in enumerate(q[env.state]) if q_value == max(q[env.state])]
 
+    action = 0
+
     if (confidence > random.random()):
         action = max_action
     else:
@@ -65,7 +68,8 @@ while env.running:
 
     try:
         reward = env.move(action)
-    except:
+    except Exception:
+        print traceback.format_exc()
         break
 
     initialize_q_value(env.state)

@@ -47,7 +47,7 @@ class Environment:
         self.motor_bottom.reset_position(False)
 
     def move(self, action):
-        step_size = random.randint(ORIGINAL_STEP_SIZE-2,ORIGINAL_STEP_SIZE+2)
+        step_size = random.randint(self.ORIGINAL_STEP_SIZE - 2, self.ORIGINAL_STEP_SIZE + 2)
         start_distance = self.get_distance()
         print '------'
         print 'start distance: ' + str(start_distance)
