@@ -27,7 +27,8 @@ class Environment:
     BOTTOM_MIN = 0
     BOTTOM_MAX = 160
 
-    ORIGINAL_STEP_SIZE = 12
+    ORIGINAL_STEP_SIZE = 20
+    STEP_SIZE_VARIETY = 5
 
     def __init__(self):
         self.top_current = 0
@@ -47,7 +48,7 @@ class Environment:
         self.motor_bottom.reset_position(False)
 
     def move(self, action):
-        step_size = random.randint(self.ORIGINAL_STEP_SIZE - 2, self.ORIGINAL_STEP_SIZE + 2)
+        step_size = random.randint(self.ORIGINAL_STEP_SIZE - self.STEP_SIZE_VARIETY, self.ORIGINAL_STEP_SIZE + self.STEP_SIZE_VARIETY)
         start_distance = self.get_distance()
         print '------'
         print 'start distance: ' + str(start_distance)
@@ -82,12 +83,11 @@ class Environment:
             self.top_current = self.motor_top.get_tacho().rotation_count
             self.bottom_current = self.motor_bottom.get_tacho().rotation_count
             reward = self.get_distance() - start_distance
-            reward *= reward * reward
         else:
             print 'out of bounds'
             reward = self.REWARD_BAD
 
-        self.state = str(round(self.top_current / ACCURACY)) + "/" + str(round(self.bottom_current / ACCURACY))
+        self.state = str(round(self.top_current / self.ACCURACY)) + "/" + str(round(self.bottom_current / self.ACCURACY))
 
         print 'top_current: ' + str(self.top_current)
         print 'bottom_current: ' + str(self.bottom_current)

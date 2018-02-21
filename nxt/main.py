@@ -62,7 +62,7 @@ while env.running:
     if (confidence > random.random()):
         action = max_action
     else:
-        action = random.randint(0, env.NUM_ACTIONS)
+        action = random.randint(0, env.NUM_ACTIONS - 1)
 
     confidence += (1 - confidence) / 10
 
