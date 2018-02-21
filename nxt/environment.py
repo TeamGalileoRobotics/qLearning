@@ -1,6 +1,7 @@
 import time
 import keyboard
 import nxt.locator
+import random
 from nxt.sensor import *
 from nxt.motor import *
 
@@ -17,7 +18,6 @@ class Environment:
     SPEED = 50
     WAIT_TIME = 0.2
     ACCURACY = 10
-    step_size = 12
 
     NUM_ACTIONS = 4
 
@@ -26,6 +26,8 @@ class Environment:
 
     BOTTOM_MIN = 0
     BOTTOM_MAX = 160
+
+    ORIGINAL_STEP_SIZE = 12
 
     def __init__(self):
         self.top_current = 0
@@ -45,6 +47,7 @@ class Environment:
         self.motor_bottom.reset_position(False)
 
     def move(self, action):
+        step_size = random.randint(ORIGINAL_STEP_SIZE-2,ORIGINAL_STEP_SIZE+2)
         start_distance = self.get_distance()
         print '------'
         print 'start distance: ' + str(start_distance)
@@ -65,15 +68,15 @@ class Environment:
             top_fac = -1
             bottom_fac = -1
 
-        top_angle = top_fac * self.STEP_SIZE
-        bottom_angle = bottom_fac * self.STEP_SIZE
+        top_angle = top_fac * step_size
+        bottom_angle = bottom_fac * step_size
 
         top_new = self.top_current + top_angle
         bottom_new = self.bottom_current + bottom_angle
 
         if self.check_bounds(top_new, bottom_new):
-            self.motor_top.turn(top_fac * self.SPEED, self.STEP_SIZE)
-            self.motor_bottom.turn(bottom_fac * self.SPEED, self.STEP_SIZE)
+            self.motor_top.turn(top_fac * self.SPEED, step_size)
+            self.motor_bottom.turn(bottom_fac * self.SPEED, step_size)
             time.sleep(self.WAIT_TIME)
 
             self.top_current = self.motor_top.get_tacho().rotation_count
